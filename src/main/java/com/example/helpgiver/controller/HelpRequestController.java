@@ -77,7 +77,8 @@ public class HelpRequestController {
 
         List<EntityModel<GeoResult<HelpRequest>>> helpRequestEntities = StreamSupport.stream(helpRequests.spliterator(), false)
                 .map(helpRequest -> new EntityModel<>(helpRequest,
-                        linkTo(methodOn(HelpRequestController.class).getHelpRequest(helpRequest.getContent().getId())).withSelfRel()))
+                        linkTo(methodOn(HelpRequestController.class).getHelpRequestsGeo(x, y, distanceKm)).withSelfRel(),
+                        linkTo(methodOn(HelpRequestController.class).getHelpRequest(helpRequest.getContent().getId())).withRel("helpRequest")))
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(
