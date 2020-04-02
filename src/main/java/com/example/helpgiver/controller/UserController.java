@@ -133,27 +133,4 @@ public class UserController {
                 new CollectionModel<>(userEntities,
                         linkTo(methodOn(UserController.class).getUserGeo(x, y, distanceKm)).withSelfRel()));
     }
-
-    @GetMapping("user/{id}/helpRequestsNearby")
-    ResponseEntity<CollectionModel<EntityModel<GeoResult<HelpRequest>>>> getHelpRequestsNearUser(@PathVariable String id) {
-        Optional<User> optionalUser = userRepository.findById(id);
-        if (optionalUser.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        User foundUser = optionalUser.get();
-        if (!"Helper".equals(foundUser.getRiskGroup())) {
-            return ResponseEntity.badRequest().build(); // TODO message
-        }
-
-        Collection<EntityModel<GeoResult<HelpRequest>>> helpRequests = StreamSupport.stream(
-                helpRequestRepository.findByAddressCoordinatesNear(foundUser.getAddressCoordinates(),
-                        new Distance(foundUser.getHelpRadiusKm().doubleValue(), Metrics.KILOMETERS)).spliterator(), false)
-                .map(user -> new EntityModel<>(user,
-                        linkTo(methodOn(UserController.class).getUserById(user.getContent().getId())).withSelfRel()))
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(new CollectionModel<>(helpRequests,
-                linkTo(methodOn(UserController.class).getHelpRequestsNearUser(id)).withSelfRel()));
-    }
 }

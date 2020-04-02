@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.constraints.NotNull;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -84,6 +85,29 @@ public class HelpRequestController {
         return ResponseEntity.ok(
                 new CollectionModel<>(helpRequestEntities,
                         linkTo(methodOn(HelpRequestController.class).getHelpRequestsGeo(x, y, distanceKm)).withSelfRel()));
+    }
+
+    @GetMapping("user/{id}/helpRequestsNearby")
+    ResponseEntity<CollectionModel<EntityModel<GeoResult<HelpRequest>>>> getHelpRequestsNearUser(@PathVariable String id) {
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        User foundUser = optionalUser.get();
+        if (!"Helper".equals(foundUser.getRiskGroup())) {
+            return ResponseEntity.badRequest().build(); // TODO message
+        }
+
+        Collection<EntityModel<GeoResult<HelpRequest>>> helpRequests = StreamSupport.stream(
+                helpRequestRepository.findByAddressCoordinatesNear(foundUser.getAddressCoordinates(),
+                        new Distance(foundUser.getHelpRadiusKm(), Metrics.KILOMETERS)).spliterator(), false)
+                .map(user -> new EntityModel<>(user,
+                        linkTo(methodOn(UserController.class).getUserById(user.getContent().getId())).withSelfRel()))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(new CollectionModel<>(helpRequests,
+                linkTo(methodOn(HelpRequestController.class).getHelpRequestsNearUser(id)).withSelfRel()));
     }
 
     @PostMapping("helpRequest")

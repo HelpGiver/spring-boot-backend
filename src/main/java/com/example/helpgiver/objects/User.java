@@ -28,7 +28,7 @@ public class User {
     @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE, name = "address_coordinates_index")
     private GeoJsonPoint addressCoordinates;
 
-    private BigDecimal helpRadiusKm;
+    private double helpRadiusKm;
 
     private String riskGroup;
 
@@ -106,11 +106,11 @@ public class User {
         this.addressCoordinates = addressCoordinates;
     }
 
-    public BigDecimal getHelpRadiusKm() {
+    public double getHelpRadiusKm() {
         return helpRadiusKm;
     }
 
-    public void setHelpRadiusKm(BigDecimal helpRadiusKm) {
+    public void setHelpRadiusKm(double helpRadiusKm) {
         this.helpRadiusKm = helpRadiusKm;
     }
 

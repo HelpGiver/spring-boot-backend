@@ -42,7 +42,7 @@ public class HelpGiverApplication implements CommandLineRunner {
         user1.setRiskGroup("Helper");
         user1.setPhoneNumber("+4677777777");
         user1.setAddressCoordinates(new GeoJsonPoint(59.3293, 18.0686));
-        user1.setHelpRadiusKm(BigDecimal.valueOf(0.5));
+        user1.setHelpRadiusKm(0.5);
         userRepository.save(user1);
 
         User user2 = new User();
@@ -55,7 +55,7 @@ public class HelpGiverApplication implements CommandLineRunner {
         user2.setRiskGroup("Helper");
         user2.setPhoneNumber("+466666666");
         user2.setAddressCoordinates(new GeoJsonPoint(59.2345, 18.0111));
-        user2.setHelpRadiusKm(BigDecimal.valueOf(2));
+        user2.setHelpRadiusKm(2);
         userRepository.save(user2);
 
         User user1Db = userRepository.findByEmail("andrei@shumanskia.com").get();
