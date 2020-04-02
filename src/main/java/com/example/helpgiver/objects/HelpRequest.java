@@ -29,7 +29,10 @@ public class HelpRequest {
 
     private String category; // TODO enum or from db?
     private String description;
-    private String status;
+    private String status; //TODO enum?
+
+    private String timeStr;
+    private long time;
 
     public String getId() {
         return id;
@@ -101,5 +104,21 @@ public class HelpRequest {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getTimeStr() {
+        return timeStr;
+    }
+
+    public void setTimeStr(String timeStr) {
+        this.timeStr = timeStr;
+    }
+
+    public long getTime() {
+        return time;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
     }
 }
