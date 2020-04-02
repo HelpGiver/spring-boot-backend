@@ -102,7 +102,7 @@ public class HelpRequestController {
     }
 
     @PutMapping("helpRequest/{id}/handler")
-    public ResponseEntity<EntityModel<HelpRequest>> addHandler(@PathVariable String id, @RequestBody @NotNull User handler) {
+    public ResponseEntity<EntityModel<HelpRequest>> addHandler(@PathVariable String id, @RequestBody User handler) {
         Optional<HelpRequest> optionalHelpRequest = helpRequestRepository.findById(id);
         Optional<User> optionalUser = userRepository.findById(handler.getId());
 
@@ -124,7 +124,7 @@ public class HelpRequestController {
     }
 
     @PutMapping("helpRequest/{id}/status")
-    public ResponseEntity<EntityModel<HelpRequest>> addHandler(@PathVariable String id, @RequestParam @NotNull String status) {
+    public ResponseEntity<EntityModel<HelpRequest>> addHandler(@PathVariable String id, @RequestBody HelpRequest newStatusHelpRequest) {
         Optional<HelpRequest> optionalHelpRequest = helpRequestRepository.findById(id);
 
         if (!optionalHelpRequest.isPresent()) {
@@ -135,7 +135,7 @@ public class HelpRequestController {
         // TODO check status type, or create enum?
 
         HelpRequest foundHelpRequest = optionalHelpRequest.get();
-        foundHelpRequest.setStatus(status);
+        foundHelpRequest.setStatus(newStatusHelpRequest.getStatus());
         helpRequestRepository.save(foundHelpRequest);
 
         return ResponseEntity.ok(new EntityModel<>(foundHelpRequest,
