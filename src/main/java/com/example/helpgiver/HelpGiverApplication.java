@@ -10,8 +10,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 
-import java.math.BigDecimal;
-
 @SpringBootApplication
 public class HelpGiverApplication implements CommandLineRunner {
 
@@ -70,6 +68,9 @@ public class HelpGiverApplication implements CommandLineRunner {
         request.setAddress("Storgatan 1, Stockholm");
         request.setAddressCoordinates(new GeoJsonPoint(59.2109, 18.0134));
         request.setHelper(user2Db);
+        request.setTime(System.currentTimeMillis() + 24*60*60*1000);
+        request.setTimeStr("Tomorrow date");
+        request.setStatus("OPEN");
         helpRequestRepository.save(request);
     }
 }
