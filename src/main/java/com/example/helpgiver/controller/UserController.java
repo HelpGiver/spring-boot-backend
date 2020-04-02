@@ -1,12 +1,12 @@
 package com.example.helpgiver.controller;
 
+import com.example.helpgiver.mongo.HelpRequestRepository;
 import com.example.helpgiver.mongo.UserRepository;
+import com.example.helpgiver.objects.HelpRequest;
 import com.example.helpgiver.objects.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.GeoResult;
-import org.springframework.data.geo.GeoResults;
-import org.springframework.data.geo.Metric;
 import org.springframework.data.geo.Metrics;
 import org.springframework.data.geo.Point;
 import org.springframework.hateoas.CollectionModel;
@@ -40,6 +40,9 @@ public class UserController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private HelpRequestRepository helpRequestRepository;
 
     @GetMapping("/user/{id}")
     public ResponseEntity<EntityModel<User>> getUserById(@PathVariable String id) {
@@ -88,6 +91,33 @@ public class UserController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+
+    @GetMapping("user/{requesterId}/needsHelp")
+    public ResponseEntity<CollectionModel<EntityModel<HelpRequest>>> getByRequesterId(@PathVariable String requesterId) {
+        List<EntityModel<HelpRequest>> helpRequestEntities = StreamSupport.stream(helpRequestRepository.findByRequesterId(requesterId).spliterator(), false)
+                .map(helpRequest -> new EntityModel<>(helpRequest,
+                        linkTo(methodOn(UserController.class).getByRequesterId(requesterId)).withSelfRel(),
+                        linkTo(methodOn(UserController.class).getUsers()).withRel("users")))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(
+                new CollectionModel<>(helpRequestEntities,
+                        linkTo(methodOn(HelpRequestController.class).getHelpRequests()).withSelfRel()));
+    }
+
+    @GetMapping("user/{helperId}/helps")
+    public ResponseEntity<CollectionModel<EntityModel<HelpRequest>>> getByHelperId(@PathVariable String helperId) {
+        List<EntityModel<HelpRequest>> helpRequestEntities = StreamSupport.stream(helpRequestRepository.findByHelperId(helperId).spliterator(), false)
+                .map(helpRequest -> new EntityModel<>(helpRequest,
+                        linkTo(methodOn(UserController.class).getByHelperId(helperId)).withSelfRel(),
+                        linkTo(methodOn(UserController.class).getUsers()).withRel("users")))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(
+                new CollectionModel<>(helpRequestEntities,
+                        linkTo(methodOn(HelpRequestController.class).getHelpRequests()).withSelfRel()));
+    }
+
     @PostMapping("user")
     public ResponseEntity<EntityModel<User>> addUser(@RequestBody User user) {
         User savedUser = userRepository.save(user);
@@ -115,7 +145,7 @@ public class UserController {
     }
 
     @GetMapping("nearbyUsers")
-    ResponseEntity<CollectionModel<EntityModel<GeoResult<User>>>> getUserGeo(@RequestParam @NotNull  double x, @RequestParam @NotNull double y, @RequestParam @NotNull double distanceKm) {
+    ResponseEntity<CollectionModel<EntityModel<GeoResult<User>>>> getUserGeo(@RequestParam @NotNull double x, @RequestParam @NotNull double y, @RequestParam @NotNull double distanceKm) {
         List<GeoResult<User>> users = userRepository.findByAddressCoordinatesNear(new Point(x, y), new Distance(distanceKm, Metrics.KILOMETERS)).getContent();
 
         List<EntityModel<GeoResult<User>>> userEntities = StreamSupport.stream(users.spliterator(), false)

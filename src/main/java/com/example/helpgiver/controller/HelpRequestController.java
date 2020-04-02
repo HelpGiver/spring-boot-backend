@@ -69,32 +69,6 @@ public class HelpRequestController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("helpRequests/requester/{requesterId}")
-    public ResponseEntity<CollectionModel<EntityModel<HelpRequest>>> getByRequesterId(@PathVariable String requesterId) {
-        List<EntityModel<HelpRequest>> helpRequestEntities = StreamSupport.stream(helpRequestRepository.findByRequesterId(requesterId).spliterator(), false)
-                .map(helpRequest -> new EntityModel<>(helpRequest,
-                        linkTo(methodOn(HelpRequestController.class).getHelpRequest(helpRequest.getId())).withSelfRel(),
-                        linkTo(methodOn(HelpRequestController.class).getHelpRequests()).withRel("helpRequests")))
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(
-                new CollectionModel<>(helpRequestEntities,
-                        linkTo(methodOn(HelpRequestController.class).getHelpRequests()).withSelfRel()));
-    }
-
-    @GetMapping("helpRequests/helper/{helperId}")
-    public ResponseEntity<CollectionModel<EntityModel<HelpRequest>>> getByHelperId(@PathVariable String helperId) {
-        List<EntityModel<HelpRequest>> helpRequestEntities = StreamSupport.stream(helpRequestRepository.findByHelperId(helperId).spliterator(), false)
-                .map(helpRequest -> new EntityModel<>(helpRequest,
-                        linkTo(methodOn(HelpRequestController.class).getHelpRequest(helpRequest.getId())).withSelfRel(),
-                        linkTo(methodOn(HelpRequestController.class).getHelpRequests()).withRel("helpRequests")))
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(
-                new CollectionModel<>(helpRequestEntities,
-                        linkTo(methodOn(HelpRequestController.class).getHelpRequests()).withSelfRel()));
-    }
-
     @GetMapping("nearbyHelpRequests")
     public ResponseEntity<CollectionModel<EntityModel<GeoResult<HelpRequest>>>> getHelpRequestsGeo(@RequestParam @NotNull double x, @RequestParam @NotNull double y, @RequestParam @NotNull double distanceKm) {
         List<GeoResult<HelpRequest>> helpRequests = helpRequestRepository.findByAddressCoordinatesNear(new Point(x, y), new Distance(distanceKm, Metrics.KILOMETERS)).getContent();
