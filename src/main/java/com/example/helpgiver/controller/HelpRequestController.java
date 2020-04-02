@@ -87,7 +87,7 @@ public class HelpRequestController {
                         linkTo(methodOn(HelpRequestController.class).getHelpRequestsGeo(x, y, distanceKm)).withSelfRel()));
     }
 
-    @GetMapping("user/{id}/helpRequestsNearby")
+    @GetMapping("user/{id}/nearbyHelpRequests")
     ResponseEntity<CollectionModel<EntityModel<GeoResult<HelpRequest>>>> getHelpRequestsNearUser(@PathVariable String id) {
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isEmpty()) {
