@@ -20,15 +20,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.constraints.NotNull;
 import java.util.Collections;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -105,7 +102,7 @@ public class HelpRequestController {
     }
 
     @PutMapping("helpRequest/{id}/handler")
-    public ResponseEntity<EntityModel<HelpRequest>> addHandler(@PathVariable String id, @RequestBody @NotNull User handler) {
+    public ResponseEntity<EntityModel<HelpRequest>> addHandler(@PathVariable String id, @RequestBody User handler) {
         Optional<HelpRequest> optionalHelpRequest = helpRequestRepository.findById(id);
         Optional<User> optionalUser = userRepository.findById(handler.getId());
 
@@ -119,6 +116,26 @@ public class HelpRequestController {
 
         HelpRequest foundHelpRequest = optionalHelpRequest.get();
         foundHelpRequest.setHelper(optionalUser.get());
+        helpRequestRepository.save(foundHelpRequest);
+
+        return ResponseEntity.ok(new EntityModel<>(foundHelpRequest,
+                linkTo(methodOn(HelpRequestController.class).getHelpRequest(foundHelpRequest.getId())).withSelfRel(),
+                linkTo(methodOn(HelpRequestController.class).getHelpRequests()).withRel("helpRequests")));
+    }
+
+    @PutMapping("helpRequest/{id}/status")
+    public ResponseEntity<EntityModel<HelpRequest>> addHandler(@PathVariable String id, @RequestBody HelpRequest newStatusHelpRequest) {
+        Optional<HelpRequest> optionalHelpRequest = helpRequestRepository.findById(id);
+
+        if (!optionalHelpRequest.isPresent()) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Help request not found");
+        }
+
+        // TODO check status type, or create enum?
+
+        HelpRequest foundHelpRequest = optionalHelpRequest.get();
+        foundHelpRequest.setStatus(newStatusHelpRequest.getStatus());
         helpRequestRepository.save(foundHelpRequest);
 
         return ResponseEntity.ok(new EntityModel<>(foundHelpRequest,
