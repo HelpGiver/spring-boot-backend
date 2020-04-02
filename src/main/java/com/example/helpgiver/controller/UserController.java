@@ -81,6 +81,7 @@ public class UserController {
         return user
                 .map(u -> new EntityModel<>(u,
                         linkTo(methodOn(UserController.class).getUserByByEmailOrPhone(email, phoneNumber)).withSelfRel(),
+                        linkTo(methodOn(UserController.class).getUserById(u.getId())).withRel("user"),
                         linkTo(methodOn(HelpRequestController.class).getHelpRequests()).withRel("requests")))
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -118,7 +119,8 @@ public class UserController {
 
         List<EntityModel<GeoResult<User>>> userEntities = StreamSupport.stream(users.spliterator(), false)
                 .map(user -> new EntityModel<>(user,
-                        linkTo(methodOn(UserController.class).getUserById(user.getContent().getId())).withSelfRel()))
+                        linkTo(methodOn(UserController.class).getUserGeo(x, y, distanceKm)).withSelfRel(),
+                        linkTo(methodOn(UserController.class).getUserById(user.getContent().getId())).withRel("user")))
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(

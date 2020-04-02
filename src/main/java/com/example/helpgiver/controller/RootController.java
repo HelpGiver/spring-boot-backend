@@ -25,9 +25,11 @@ public class RootController {
                 linkTo(methodOn(UserController.class).getUsers()).withRel("users"),
                 linkTo(methodOn(UserController.class).getUserById(null)).withRel("user"),
                 linkTo(methodOn(UserController.class).getUserByByEmailOrPhone(null, null)).withRel("user"),
+                linkTo(methodOn(UserController.class).getUserGeo(0, 0, 0)).withRel("nearbyUsers"),
 
                 linkTo(methodOn(HelpRequestController.class).getHelpRequests()).withRel("helpRequests"),
                 linkTo(methodOn(HelpRequestController.class).getByHelperId(null)).withRel("helpGivenRequests"),
-                linkTo(methodOn(HelpRequestController.class).getByRequesterId(null)).withRel("helpWantedRequests")));
+                linkTo(methodOn(HelpRequestController.class).getByRequesterId(null)).withRel("helpWantedRequests"),
+                linkTo(methodOn(HelpRequestController.class).getHelpRequestsGeo(0, 0, 0)).withRel("nearbyHelpRequests")));
     }
 }
