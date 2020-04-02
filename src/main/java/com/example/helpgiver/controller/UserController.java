@@ -39,7 +39,7 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-    @GetMapping("/user/{id}")
+    @GetMapping("user/{id}")
     public ResponseEntity<EntityModel<User>> getUserById(@PathVariable String id) {
         return userRepository.findById(id)
                 .map(user -> new EntityModel<>(user,

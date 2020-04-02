@@ -1,8 +1,10 @@
 package com.example.helpgiver.controller;
 
 import com.example.helpgiver.mongo.HelpRequestRepository;
+import com.example.helpgiver.mongo.SessionRepository;
 import com.example.helpgiver.mongo.UserRepository;
 import com.example.helpgiver.objects.HelpRequest;
+import com.example.helpgiver.objects.Session;
 import com.example.helpgiver.objects.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.Distance;
@@ -19,12 +21,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.constraints.NotNull;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -43,6 +47,9 @@ public class HelpRequestController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private SessionRepository sessionRepository;
 
     // TODO help requests should link to users (but links are generally meh now)
 
@@ -177,5 +184,29 @@ public class HelpRequestController {
         return ResponseEntity.ok(
                 new CollectionModel<>(helpRequestEntities,
                         linkTo(methodOn(HelpRequestController.class).getHelpRequests()).withSelfRel()));
+    }
+
+    @GetMapping("user/helpWantedRequests")
+    public ResponseEntity<Collection<HelpRequest>> getLoggedInUsersWantedRequests(@RequestHeader String sessionId) {
+        Optional<Session> session = sessionRepository.getById(sessionId);
+        if (session.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        Collection<HelpRequest> helpRequests = helpRequestRepository.findByRequesterId(session.get().getUserId());
+
+        return ResponseEntity.ok(helpRequests);
+    }
+
+    @GetMapping("user/helpGivenRequests")
+    public ResponseEntity<Collection<HelpRequest>> getLoggedInUsersGivenRequests(@RequestHeader String sessionId) {
+        Optional<Session> session = sessionRepository.getById(sessionId);
+        if (session.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        Collection<HelpRequest> helpRequests = helpRequestRepository.findByHelperId(session.get().getUserId());
+
+        return ResponseEntity.ok(helpRequests);
     }
 }
