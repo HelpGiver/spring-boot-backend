@@ -26,6 +26,8 @@ public class RootController {
                 linkTo(methodOn(UserController.class).getUserById(null)).withRel("user"),
                 linkTo(methodOn(UserController.class).getUserByByEmailOrPhone(null, null)).withRel("user"),
 
-                linkTo(methodOn(HelpRequestController.class).getHelpRequests()).withRel("helpRequests")));
+                linkTo(methodOn(HelpRequestController.class).getHelpRequests()).withRel("helpRequests"),
+                linkTo(methodOn(HelpRequestController.class).getByHelperId(null)).withRel("helpGivenRequests"),
+                linkTo(methodOn(HelpRequestController.class).getByRequesterId(null)).withRel("helpWantedRequests")));
     }
 }

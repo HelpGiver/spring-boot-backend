@@ -5,8 +5,6 @@ import com.example.helpgiver.objects.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.GeoResult;
-import org.springframework.data.geo.GeoResults;
-import org.springframework.data.geo.Metric;
 import org.springframework.data.geo.Metrics;
 import org.springframework.data.geo.Point;
 import org.springframework.hateoas.CollectionModel;
@@ -83,7 +81,7 @@ public class UserController {
         return user
                 .map(u -> new EntityModel<>(u,
                         linkTo(methodOn(UserController.class).getUserByByEmailOrPhone(email, phoneNumber)).withSelfRel(),
-                        linkTo(methodOn(UserController.class).getUsers()).withRel("users")))
+                        linkTo(methodOn(HelpRequestController.class).getHelpRequests()).withRel("requests")))
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -115,7 +113,7 @@ public class UserController {
     }
 
     @GetMapping("nearbyUsers")
-    ResponseEntity<CollectionModel<EntityModel<GeoResult<User>>>> getUserGeo(@RequestParam @NotNull  double x, @RequestParam @NotNull double y, @RequestParam @NotNull double distanceKm) {
+    ResponseEntity<CollectionModel<EntityModel<GeoResult<User>>>> getUserGeo(@RequestParam @NotNull double x, @RequestParam @NotNull double y, @RequestParam @NotNull double distanceKm) {
         List<GeoResult<User>> users = userRepository.findByAddressCoordinatesNear(new Point(x, y), new Distance(distanceKm, Metrics.KILOMETERS)).getContent();
 
         List<EntityModel<GeoResult<User>>> userEntities = StreamSupport.stream(users.spliterator(), false)
