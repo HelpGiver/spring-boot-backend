@@ -1,6 +1,7 @@
 package com.example.helpgiver;
 
 import com.example.helpgiver.mongo.HelpRequestRepository;
+import com.example.helpgiver.mongo.SessionRepository;
 import com.example.helpgiver.mongo.UserRepository;
 import com.example.helpgiver.objects.HelpRequest;
 import com.example.helpgiver.objects.User;
@@ -19,6 +20,9 @@ public class HelpGiverApplication implements CommandLineRunner {
     @Autowired
     private HelpRequestRepository helpRequestRepository;
 
+    @Autowired
+    private SessionRepository sessionRepository;
+
     public static void main(String[] args) {
         SpringApplication.run(HelpGiverApplication.class, args);
     }
@@ -28,6 +32,7 @@ public class HelpGiverApplication implements CommandLineRunner {
         // Fresh start
         userRepository.deleteAll();
         helpRequestRepository.deleteAll();
+        sessionRepository.deleteAll();
 
         // Adding test user
         User user1 = new User();
