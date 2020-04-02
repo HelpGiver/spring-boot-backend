@@ -7,6 +7,8 @@ import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.math.BigDecimal;
+
 @Document
 public class User {
     @Id
@@ -25,6 +27,8 @@ public class User {
 
     @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE, name = "address_coordinates_index")
     private GeoJsonPoint addressCoordinates;
+
+    private double helpRadiusKm;
 
     private String riskGroup;
 
@@ -102,6 +106,14 @@ public class User {
         this.addressCoordinates = addressCoordinates;
     }
 
+    public double getHelpRadiusKm() {
+        return helpRadiusKm;
+    }
+
+    public void setHelpRadiusKm(double helpRadiusKm) {
+        this.helpRadiusKm = helpRadiusKm;
+    }
+
     public String getRiskGroup() {
         return riskGroup;
     }
@@ -121,6 +133,7 @@ public class User {
                 ", email='" + email + '\'' +
                 ", addressText='" + addressText + '\'' +
                 ", addressCoordinates=" + addressCoordinates +
+                ", helpRadiusKm=" + helpRadiusKm +
                 ", riskGroup='" + riskGroup + '\'' +
                 ", password='" + password + '\'' +
                 '}';
