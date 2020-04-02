@@ -1,6 +1,6 @@
 # Help Giver
 
-Foobar is a Python library for dealing with word pluralization.
+The Help Giveris aservice thatsimplifies matching of the people who need help during COVID-19 pandemic with volunteers who want to provide this help.
 
 ## Back-end
 - Spring Boot app
