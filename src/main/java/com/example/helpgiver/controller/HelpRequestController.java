@@ -51,7 +51,9 @@ public class HelpRequestController {
         List<EntityModel<HelpRequest>> helpRequestEntities = StreamSupport.stream(helpRequestRepository.findAll().spliterator(), false)
                 .map(helpRequest -> new EntityModel<>(helpRequest,
                         linkTo(methodOn(HelpRequestController.class).getHelpRequest(helpRequest.getId())).withSelfRel(),
-                        linkTo(methodOn(HelpRequestController.class).getHelpRequests()).withRel("helpRequests")))
+                        linkTo(methodOn(HelpRequestController.class).getHelpRequests()).withRel("helpRequests"),
+                        linkTo(methodOn(HelpRequestController.class).getByHelperId(null)).withRel("helpGivenRequests"),
+                        linkTo(methodOn(HelpRequestController.class).getByRequesterId(null)).withRel("helpWantedRequests")))
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(
@@ -149,5 +151,31 @@ public class HelpRequestController {
 
         return ResponseEntity.ok(new CollectionModel<>(Collections.emptySet(),
                 linkTo(methodOn(HelpRequestController.class).getHelpRequests()).withRel("helpRequests")));
+    }
+
+    @GetMapping("user/{requesterId}/helpWantedRequests")
+    public ResponseEntity<CollectionModel<EntityModel<HelpRequest>>> getByRequesterId(@PathVariable String requesterId) {
+        List<EntityModel<HelpRequest>> helpRequestEntities = StreamSupport.stream(helpRequestRepository.findByRequesterId(requesterId).spliterator(), false)
+                .map(helpRequest -> new EntityModel<>(helpRequest,
+                        linkTo(methodOn(HelpRequestController.class).getByRequesterId(requesterId)).withSelfRel(),
+                        linkTo(methodOn(HelpRequestController.class).getHelpRequests()).withRel("requests")))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(
+                new CollectionModel<>(helpRequestEntities,
+                        linkTo(methodOn(HelpRequestController.class).getHelpRequests()).withSelfRel()));
+    }
+
+    @GetMapping("user/{helperId}/helpGivenRequests")
+    public ResponseEntity<CollectionModel<EntityModel<HelpRequest>>> getByHelperId(@PathVariable String helperId) {
+        List<EntityModel<HelpRequest>> helpRequestEntities = StreamSupport.stream(helpRequestRepository.findByHelperId(helperId).spliterator(), false)
+                .map(helpRequest -> new EntityModel<>(helpRequest,
+                        linkTo(methodOn(HelpRequestController.class).getByHelperId(helperId)).withSelfRel(),
+                        linkTo(methodOn(HelpRequestController.class).getHelpRequests()).withRel("requests")))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(
+                new CollectionModel<>(helpRequestEntities,
+                        linkTo(methodOn(HelpRequestController.class).getHelpRequests()).withSelfRel()));
     }
 }
