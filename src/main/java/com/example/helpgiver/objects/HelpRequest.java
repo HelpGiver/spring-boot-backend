@@ -5,6 +5,8 @@ import org.springframework.data.annotation.Reference;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
@@ -14,10 +16,10 @@ public class HelpRequest {
 
     private String title;
 
-    @Reference
+    @DBRef
     private User requester;
 
-    @Reference
+    @DBRef
     private User helper;
 
     private String address;
