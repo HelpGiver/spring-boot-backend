@@ -1,6 +1,8 @@
 package com.example.helpgiver.controller;
 
+import com.example.helpgiver.mongo.HelpRequestRepository;
 import com.example.helpgiver.mongo.UserRepository;
+import com.example.helpgiver.objects.HelpRequest;
 import com.example.helpgiver.objects.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.Distance;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.constraints.NotNull;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -38,6 +41,9 @@ public class UserController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private HelpRequestRepository helpRequestRepository;
 
     @GetMapping("/user/{id}")
     public ResponseEntity<EntityModel<User>> getUserById(@PathVariable String id) {
@@ -126,5 +132,28 @@ public class UserController {
         return ResponseEntity.ok(
                 new CollectionModel<>(userEntities,
                         linkTo(methodOn(UserController.class).getUserGeo(x, y, distanceKm)).withSelfRel()));
+    }
+
+    @GetMapping("user/{id}/helpRequestsNearby")
+    ResponseEntity<CollectionModel<EntityModel<GeoResult<HelpRequest>>>> getHelpRequestsNearUser(@PathVariable String id) {
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        User foundUser = optionalUser.get();
+        if (!"Helper".equals(foundUser.getRiskGroup())) {
+            return ResponseEntity.badRequest().build(); // TODO message
+        }
+
+        Collection<EntityModel<GeoResult<HelpRequest>>> helpRequests = StreamSupport.stream(
+                helpRequestRepository.findByAddressCoordinatesNear(foundUser.getAddressCoordinates(),
+                        new Distance(foundUser.getHelpRadiusKm().doubleValue(), Metrics.KILOMETERS)).spliterator(), false)
+                .map(user -> new EntityModel<>(user,
+                        linkTo(methodOn(UserController.class).getUserById(user.getContent().getId())).withSelfRel()))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(new CollectionModel<>(helpRequests,
+                linkTo(methodOn(UserController.class).getHelpRequestsNearUser(id)).withSelfRel()));
     }
 }
