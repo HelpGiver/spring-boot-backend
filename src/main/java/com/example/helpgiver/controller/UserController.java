@@ -135,7 +135,7 @@ public class UserController {
     }
 
     // TODO other method like this return <GeoResult<User>>, but do they need to?
-    @GetMapping("helpRequest/{id}/nearbyUsers")
+    @GetMapping("helpRequest/{id}/potentiallyHelpingUsers")
     public ResponseEntity<CollectionModel<EntityModel<User>>> getUsersNearHelpRequest(@PathVariable String id) {
         Optional<HelpRequest> optionalHelpRequest = helpRequestRepository.findById(id);
 
@@ -144,12 +144,15 @@ public class UserController {
         }
 
         // TODO it should be possible to replace this monstrosity with a mongo query:
-        Collection<EntityModel<User>> usersNearby = userRepository.findAll().stream()
+        Collection<EntityModel<User>> usersNearby = StreamSupport.stream(
+                userRepository.findByAddressCoordinatesNear(optionalHelpRequest.get().getAddressCoordinates(),
+                        new Distance(10.0, Metrics.KILOMETERS)).spliterator(), false)
+                .map(GeoResult::getContent)
                 .filter(user -> helpRequestRepository
                         .findByAddressCoordinatesNear(user.getAddressCoordinates(),
                                 new Distance(user.getHelpRadiusKm(), Metrics.KILOMETERS))
-                        .getContent().stream().map(gr -> gr.getContent())
-                        .filter(r -> r.getId().equals(id)).findAny().isPresent())
+                        .getContent().stream().map(GeoResult::getContent)
+                        .anyMatch(r -> r.getId().equals(id)))
                 .filter(user -> "Helper".equals(user.getRiskGroup()))
                 .map(user -> new EntityModel<>(user,
                         linkTo(methodOn(UserController.class).getUserById(user.getId())).withSelfRel()))
