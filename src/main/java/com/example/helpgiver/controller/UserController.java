@@ -120,7 +120,7 @@ public class UserController {
     }
 
     @GetMapping("nearbyUsers")
-    ResponseEntity<CollectionModel<EntityModel<GeoResult<User>>>> getUserGeo(@RequestParam @NotNull double x, @RequestParam @NotNull double y, @RequestParam @NotNull double distanceKm) {
+    public ResponseEntity<CollectionModel<EntityModel<GeoResult<User>>>> getUserGeo(@RequestParam @NotNull double x, @RequestParam @NotNull double y, @RequestParam @NotNull double distanceKm) {
         List<GeoResult<User>> users = userRepository.findByAddressCoordinatesNear(new Point(x, y), new Distance(distanceKm, Metrics.KILOMETERS)).getContent();
 
         List<EntityModel<GeoResult<User>>> userEntities = StreamSupport.stream(users.spliterator(), false)
@@ -132,5 +132,33 @@ public class UserController {
         return ResponseEntity.ok(
                 new CollectionModel<>(userEntities,
                         linkTo(methodOn(UserController.class).getUserGeo(x, y, distanceKm)).withSelfRel()));
+    }
+
+    // TODO other method like this return <GeoResult<User>>, but do they need to?
+    @GetMapping("helpRequest/{id}/potentiallyHelpingUsers")
+    public ResponseEntity<CollectionModel<EntityModel<User>>> getUsersNearHelpRequest(@PathVariable String id) {
+        Optional<HelpRequest> optionalHelpRequest = helpRequestRepository.findById(id);
+
+        if (optionalHelpRequest.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // TODO it should be possible to replace this monstrosity with a mongo query:
+        Collection<EntityModel<User>> usersNearby = StreamSupport.stream(
+                userRepository.findByAddressCoordinatesNear(optionalHelpRequest.get().getAddressCoordinates(),
+                        new Distance(10.0, Metrics.KILOMETERS)).spliterator(), false)
+                .map(GeoResult::getContent)
+                .filter(user -> helpRequestRepository
+                        .findByAddressCoordinatesNear(user.getAddressCoordinates(),
+                                new Distance(user.getHelpRadiusKm(), Metrics.KILOMETERS))
+                        .getContent().stream().map(GeoResult::getContent)
+                        .anyMatch(r -> r.getId().equals(id)))
+                .filter(user -> "Helper".equals(user.getRiskGroup()))
+                .map(user -> new EntityModel<>(user,
+                        linkTo(methodOn(UserController.class).getUserById(user.getId())).withSelfRel()))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(new CollectionModel<>(usersNearby,
+                linkTo(methodOn(UserController.class).getUsersNearHelpRequest(id)).withSelfRel()));
     }
 }
