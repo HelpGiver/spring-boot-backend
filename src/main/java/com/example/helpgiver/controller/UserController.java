@@ -9,6 +9,7 @@ import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.GeoResult;
 import org.springframework.data.geo.Metrics;
 import org.springframework.data.geo.Point;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
@@ -132,5 +133,30 @@ public class UserController {
         return ResponseEntity.ok(
                 new CollectionModel<>(userEntities,
                         linkTo(methodOn(UserController.class).getUserGeo(x, y, distanceKm)).withSelfRel()));
+    }
+
+    @GetMapping("helpRequest/{id}/nearbyUsers")
+    ResponseEntity<CollectionModel<EntityModel<GeoResult<User>>>> getUsersNearHelpRequest(@PathVariable String id) {
+        Optional<HelpRequest> optionalHelpRequest = helpRequestRepository.findById(id);
+
+        if (optionalHelpRequest.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        GeoJsonPoint helpRequestJsonPoint = optionalHelpRequest.get().getAddressCoordinates();
+
+        Collection<GeoResult<User>> usersNearby = userRepository
+                .findByAddressCoordinatesNear(helpRequestJsonPoint, new Distance(5.0, Metrics.KILOMETERS))
+                .getContent();
+
+        Collection<EntityModel<GeoResult<User>>> userModels = StreamSupport.stream(
+                userRepository.findByAddressCoordinatesNear(helpRequestJsonPoint,
+                        new Distance(5.0, Metrics.KILOMETERS)).spliterator(), false)
+                .map(user -> new EntityModel<>(user,
+                        linkTo(methodOn(UserController.class).getUserById(user.getContent().getId())).withSelfRel()))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(new CollectionModel<>(userModels,
+                linkTo(methodOn(UserController.class).getUsersNearHelpRequest(id)).withSelfRel()));
     }
 }
