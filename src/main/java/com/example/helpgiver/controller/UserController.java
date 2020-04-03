@@ -143,24 +143,19 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
 
-        Collection<User> users = userRepository.findAll();
-
         // TODO it should be possible to replace this monstrosity with a mongo query:
-        Collection<User> usersNearby = users.stream()
+        Collection<EntityModel<User>> usersNearby = userRepository.findAll().stream()
                 .filter(user -> helpRequestRepository
                         .findByAddressCoordinatesNear(user.getAddressCoordinates(),
                                 new Distance(user.getHelpRadiusKm(), Metrics.KILOMETERS))
                         .getContent().stream().map(gr -> gr.getContent())
                         .filter(r -> r.getId().equals(id)).findAny().isPresent())
                 .filter(user -> "Helper".equals(user.getRiskGroup()))
-                .collect(Collectors.toList());
-
-        Collection<EntityModel<User>> userModels = usersNearby.stream()
                 .map(user -> new EntityModel<>(user,
                         linkTo(methodOn(UserController.class).getUserById(user.getId())).withSelfRel()))
                 .collect(Collectors.toList());
 
-        return ResponseEntity.ok(new CollectionModel<>(userModels,
+        return ResponseEntity.ok(new CollectionModel<>(usersNearby,
                 linkTo(methodOn(UserController.class).getUsersNearHelpRequest(id)).withSelfRel()));
     }
 }
