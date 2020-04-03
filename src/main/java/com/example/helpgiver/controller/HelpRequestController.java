@@ -89,7 +89,7 @@ public class HelpRequestController {
     }
 
     @GetMapping("user/{id}/nearbyHelpRequests")
-    ResponseEntity<CollectionModel<EntityModel<GeoResult<HelpRequest>>>> getHelpRequestsNearUser(@PathVariable String id) {
+    public ResponseEntity<CollectionModel<EntityModel<GeoResult<HelpRequest>>>> getHelpRequestsNearUser(@PathVariable String id) {
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isEmpty()) {
             return ResponseEntity.notFound().build();

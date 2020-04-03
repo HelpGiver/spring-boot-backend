@@ -9,7 +9,6 @@ import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.GeoResult;
 import org.springframework.data.geo.Metrics;
 import org.springframework.data.geo.Point;
-import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
@@ -121,7 +120,7 @@ public class UserController {
     }
 
     @GetMapping("nearbyUsers")
-    ResponseEntity<CollectionModel<EntityModel<GeoResult<User>>>> getUserGeo(@RequestParam @NotNull double x, @RequestParam @NotNull double y, @RequestParam @NotNull double distanceKm) {
+    public ResponseEntity<CollectionModel<EntityModel<GeoResult<User>>>> getUserGeo(@RequestParam @NotNull double x, @RequestParam @NotNull double y, @RequestParam @NotNull double distanceKm) {
         List<GeoResult<User>> users = userRepository.findByAddressCoordinatesNear(new Point(x, y), new Distance(distanceKm, Metrics.KILOMETERS)).getContent();
 
         List<EntityModel<GeoResult<User>>> userEntities = StreamSupport.stream(users.spliterator(), false)
@@ -135,25 +134,30 @@ public class UserController {
                         linkTo(methodOn(UserController.class).getUserGeo(x, y, distanceKm)).withSelfRel()));
     }
 
+    // TODO other method like this return <GeoResult<User>>, but do they need to?
     @GetMapping("helpRequest/{id}/nearbyUsers")
-    ResponseEntity<CollectionModel<EntityModel<GeoResult<User>>>> getUsersNearHelpRequest(@PathVariable String id) {
+    public ResponseEntity<CollectionModel<EntityModel<User>>> getUsersNearHelpRequest(@PathVariable String id) {
         Optional<HelpRequest> optionalHelpRequest = helpRequestRepository.findById(id);
 
         if (optionalHelpRequest.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
-        GeoJsonPoint helpRequestJsonPoint = optionalHelpRequest.get().getAddressCoordinates();
+        Collection<User> users = userRepository.findAll();
 
-        Collection<GeoResult<User>> usersNearby = userRepository
-                .findByAddressCoordinatesNear(helpRequestJsonPoint, new Distance(5.0, Metrics.KILOMETERS))
-                .getContent();
+        // TODO it should be possible to replace this monstrosity with a mongo query:
+        Collection<User> usersNearby = users.stream()
+                .filter(user -> helpRequestRepository
+                        .findByAddressCoordinatesNear(user.getAddressCoordinates(),
+                                new Distance(user.getHelpRadiusKm(), Metrics.KILOMETERS))
+                        .getContent().stream().map(gr -> gr.getContent())
+                        .filter(r -> r.getId().equals(id)).findAny().isPresent())
+                .filter(user -> "Helper".equals(user.getRiskGroup()))
+                .collect(Collectors.toList());
 
-        Collection<EntityModel<GeoResult<User>>> userModels = StreamSupport.stream(
-                userRepository.findByAddressCoordinatesNear(helpRequestJsonPoint,
-                        new Distance(5.0, Metrics.KILOMETERS)).spliterator(), false)
+        Collection<EntityModel<User>> userModels = usersNearby.stream()
                 .map(user -> new EntityModel<>(user,
-                        linkTo(methodOn(UserController.class).getUserById(user.getContent().getId())).withSelfRel()))
+                        linkTo(methodOn(UserController.class).getUserById(user.getId())).withSelfRel()))
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(new CollectionModel<>(userModels,
