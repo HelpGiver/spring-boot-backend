@@ -9,6 +9,7 @@ import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.GeoResult;
 import org.springframework.data.geo.Metrics;
 import org.springframework.data.geo.Point;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
@@ -87,7 +88,7 @@ public class HelpRequestController {
                         linkTo(methodOn(HelpRequestController.class).getHelpRequestsGeo(x, y, distanceKm)).withSelfRel()));
     }
 
-    @GetMapping("user/{id}/helpRequestsNearby")
+    @GetMapping("user/{id}/nearbyHelpRequests")
     ResponseEntity<CollectionModel<EntityModel<GeoResult<HelpRequest>>>> getHelpRequestsNearUser(@PathVariable String id) {
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isEmpty()) {
