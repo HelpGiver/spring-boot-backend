@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
@@ -19,12 +20,14 @@ import java.util.Arrays;
 import java.util.Optional;
 
 import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@AutoConfigureRestDocs(outputDir = "target/snippets")
 public class HelpGiverApplicationTests {
 
     @Autowired
@@ -60,7 +63,7 @@ public class HelpGiverApplicationTests {
 
     @Test
     public void testEndPoint() throws Exception {
-        mockMvc.perform(get("/users")).andExpect(status().isOk());
+        mockMvc.perform(get("/users")).andExpect(status().isOk()).andDo(document("users"));
     }
 
 }
