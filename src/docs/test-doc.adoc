@@ -1,0 +1,6 @@
+==== Users
+
+User request example doc
+
+include::{snippets}/users/http-request.adoc[]
+include::{snippets}/users/http-response.adoc[]
