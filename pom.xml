@@ -1,242 +1,229 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.2.6.RELEASE</version>
-    <relativePath /> <!-- lookup parent from repository -->
-  </parent>
-  <groupId>com.example</groupId>
-  <artifactId>help-giver</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <name>help-giver</name>
-  <description>Demo project for Help Giver app back end</description>
-
-  <properties>
-    <java.version>11</java.version>
-    <spring-auto-restdocs-core.version>2.0.5</spring-auto-restdocs-core.version>
-    <asciidoctor-extensions.version>1.7.1</asciidoctor-extensions.version>
-    <asciidoctorj-diagram.version>1.5.18</asciidoctorj-diagram.version>
-    <asciidoctor-maven-plugin.version>1.5.8</asciidoctor-maven-plugin.version>
-  </properties>
-
-  <repositories>
-    <!-- Repository to find the asciidoc extentions dependencies. More information
-      is from here https://puravida-asciidoctor.gitlab.io/asciidoctor-extensions/ -->
-    <repository>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <id>bintray-puravida-software-repo</id>
-      <name>bintray</name>
-      <url>https://dl.bintray.com/puravida-software/repo</url>
-    </repository>
-  </repositories>
-  <pluginRepositories>
-    <!-- Plugin Repository to find the asciidoc extentions dependencies. More information
-      is from here https://puravida-asciidoctor.gitlab.io/asciidoctor-extensions/ -->
-    <pluginRepository>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <id>bintray-puravida-software-repo</id>
-      <name>bintray-plugins</name>
-      <url>https://dl.bintray.com/puravida-software/repo</url>
-    </pluginRepository>
-  </pluginRepositories>
-
-
-  <dependencies>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-actuator</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-data-mongodb</artifactId>
-    </dependency>
-    
-<!--     de.flapdoodle.embed.mongo provides embedded MongoDB for integration tests. -->
-    <dependency>
-      <groupId>de.flapdoodle.embed</groupId>
-      <artifactId>de.flapdoodle.embed.mongo</artifactId>
-      <scope>test</scope>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-hateoas</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.data</groupId>
-      <artifactId>spring-data-rest-hal-browser</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-devtools</artifactId>
-      <scope>runtime</scope>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-test</artifactId>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.junit.vintage</groupId>
-          <artifactId>junit-vintage-engine</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <!-- Spring REST documentation for Spring based MockMVC test. -->
-    <dependency>
-      <groupId>org.springframework.restdocs</groupId>
-      <artifactId>spring-restdocs-mockmvc</artifactId>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-api</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <!-- Spring REST Auto documentation. An added library on top of Spring REST
-      Documentation. -->
-    <dependency>
-      <groupId>capital.scalable</groupId>
-      <artifactId>spring-auto-restdocs-core</artifactId>
-      <version>${spring-auto-restdocs-core.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <!-- Starter for testing Spring Boot applications with libraries including
-      JUnit, Hamcrest and Mockito -->
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-test</artifactId>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.springframework.boot</groupId>
-          <artifactId>spring-boot-starter-logging</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-  </dependencies>
-
-  <build>
-    <plugins>
-      <plugin>
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
         <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-      </plugin>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.2.6.RELEASE</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+    <groupId>com.example</groupId>
+    <artifactId>help-giver</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>help-giver</name>
+    <description>Demo project for Help Giver app back end</description>
 
-      <!-- The Asciidoctor Maven Plugin is the official way to convert your
-        AsciiDoc documentation using Asciidoctor from an Apache Maven build. -->
-      <plugin>
-        <groupId>org.asciidoctor</groupId>
-        <artifactId>asciidoctor-maven-plugin</artifactId>
-        <version>${asciidoctor-maven-plugin.version}</version>
-        <executions>
-          <execution>
-            <id>generate-docs</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>process-asciidoc</goal>
-            </goals>
-            <configuration>
-              <sourceDocumentName>index.adoc</sourceDocumentName>
-              <backend>html5</backend>
-              <doctype>book</doctype>
-              <sourceHighlighter>highlightjs</sourceHighlighter>
-              <attributes>
-                <toc>left</toc>
-                <toclevels>4</toclevels>
-                <icons>font</icons>
-                <sectanchors>true</sectanchors>
-                <sectnums>true</sectnums>
-                <sectlinks>true</sectlinks>
-                <revnumber>${project.version}</revnumber>
-                <project-artifactId>${project.artifactId}</project-artifactId>
-                <toc-collapsable>true</toc-collapsable>
-              </attributes>
-            </configuration>
-          </execution>
-        </executions>
-        <dependencies>
-          <!-- Add spring-restdocs-asciidoctor as a dependency of the Asciidoctor
-            plugin. This will automatically configure the snippets attribute for use in your
-            .adoc files to point to target/generated-snippets. It will also allow you to use
-            the operation block macro. -->
-          <dependency>
+    <properties>
+        <java.version>11</java.version>
+        <!--
+        <spring-auto-restdocs-core.version>2.0.5</spring-auto-restdocs-core.version>
+        <asciidoctor-extensions.version>1.7.1</asciidoctor-extensions.version>
+        <asciidoctorj-diagram.version>1.5.18</asciidoctorj-diagram.version>
+        <asciidoctor-maven-plugin.version>1.5.8</asciidoctor-maven-plugin.version>
+        -->
+    </properties>
+
+    <!--
+        <repositories>
+            <!- Repository to find the asciidoc extentions dependencies. More information
+              is from here https://puravida-asciidoctor.gitlab.io/asciidoctor-extensions/
+            <repository>
+                <snapshots>
+                    <enabled>false</enabled>
+                </snapshots>
+                <id>bintray-puravida-software-repo</id>
+                <name>bintray</name>
+                <url>https://dl.bintray.com/puravida-software/repo</url>
+            </repository>
+        </repositories>
+        <pluginRepositories>
+            <!- Plugin Repository to find the asciidoc extentions dependencies. More information
+              is from here https://puravida-asciidoctor.gitlab.io/asciidoctor-extensions/
+            <pluginRepository>
+                <snapshots>
+                    <enabled>false</enabled>
+                </snapshots>
+                <id>bintray-puravida-software-repo</id>
+                <name>bintray-plugins</name>
+                <url>https://dl.bintray.com/puravida-software/repo</url>
+            </pluginRepository>
+        </pluginRepositories>
+       -->
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-hateoas</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-rest-hal-browser</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.junit.vintage</groupId>
+                    <artifactId>junit-vintage-engine</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>de.flapdoodle.embed</groupId>
+            <artifactId>de.flapdoodle.embed.mongo</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- some doc stuff, remove for now
+        <dependency>
             <groupId>org.springframework.restdocs</groupId>
-            <artifactId>spring-restdocs-asciidoctor</artifactId>
-            <version>${spring-restdocs.version}</version>
-          </dependency>
-          <!-- AsciidoctorJ Diagram bundles the Asciidoctor Diagram RubyGem
-            (asciidoctor-diagram) so it can be loaded into the JVM using JRuby. -->
-          <dependency>
-            <groupId>org.asciidoctor</groupId>
-            <artifactId>asciidoctorj-diagram</artifactId>
-            <version>${asciidoctorj-diagram.version}</version>
-          </dependency>
-          <!-- Add PuraVida Asciidoctor Extension. For example to have the collapsable feature. -->
-          <dependency>
-            <groupId>com.puravida.asciidoctor</groupId>
-            <artifactId>asciidoctor-extensions</artifactId>
-            <version>${asciidoctor-extensions.version}</version>
-          </dependency>
-        </dependencies>
-        <configuration>
-          <attributes>
-            <data-uri />
-          </attributes>
-          <requires>
-            <require>asciidoctor-diagram</require>
-          </requires>
-        </configuration>
-      </plugin>
+            <artifactId>spring-restdocs-mockmvc</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
-      <!-- The resource plugin must be declared after the Asciidoctor plugin
-        as they are bound to the same phase (prepare-package) and the resource plugin must
-        run after the Asciidoctor plugin to ensure that the documentation is generated before
-        it’s copied. -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy-resources</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>
-                ${project.build.outputDirectory}/restdocs/
-              </outputDirectory>
-              <resources>
-                <resource>
-                  <directory>
-                    ${project.build.directory}/generated-docs
-                  </directory>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
+        <dependency>
+            <groupId>capital.scalable</groupId>
+            <artifactId>spring-auto-restdocs-core</artifactId>
+            <version>${spring-auto-restdocs-core.version}</version>
+            <scope>test</scope>
+        </dependency> -->
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+            <!-- The Asciidoctor Maven Plugin is the official way to convert your
+              AsciiDoc documentation using Asciidoctor from an Apache Maven build.
+            <plugin>
+                <groupId>org.asciidoctor</groupId>
+                <artifactId>asciidoctor-maven-plugin</artifactId>
+                <version>${asciidoctor-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>generate-docs</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>process-asciidoc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDocumentName>index.adoc</sourceDocumentName>
+                            <backend>html5</backend>
+                            <doctype>book</doctype>
+                            <sourceHighlighter>highlightjs</sourceHighlighter>
+                            <attributes>
+                                <toc>left</toc>
+                                <toclevels>4</toclevels>
+                                <icons>font</icons>
+                                <sectanchors>true</sectanchors>
+                                <sectnums>true</sectnums>
+                                <sectlinks>true</sectlinks>
+                                <revnumber>${project.version}</revnumber>
+                                <project-artifactId>${project.artifactId}</project-artifactId>
+                                <toc-collapsable>true</toc-collapsable>
+                            </attributes>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <!- Add spring-restdocs-asciidoctor as a dependency of the Asciidoctor
+                      plugin. This will automatically configure the snippets attribute for use in your
+                      .adoc files to point to target/generated-snippets. It will also allow you to use
+                      the operation block macro.
+                    <dependency>
+                        <groupId>org.springframework.restdocs</groupId>
+                        <artifactId>spring-restdocs-asciidoctor</artifactId>
+                        <version>${spring-restdocs.version}</version>
+                    </dependency>
+                    <!- AsciidoctorJ Diagram bundles the Asciidoctor Diagram RubyGem
+                      (asciidoctor-diagram) so it can be loaded into the JVM using JRuby.
+                    <dependency>
+                        <groupId>org.asciidoctor</groupId>
+                        <artifactId>asciidoctorj-diagram</artifactId>
+                        <version>${asciidoctorj-diagram.version}</version>
+                    </dependency>
+                    <!- Add PuraVida Asciidoctor Extension. For example to have the collapsable feature.
+                    <dependency>
+                        <groupId>com.puravida.asciidoctor</groupId>
+                        <artifactId>asciidoctor-extensions</artifactId>
+                        <version>${asciidoctor-extensions.version}</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <attributes>
+                        <data-uri/>
+                    </attributes>
+                    <requires>
+                        <require>asciidoctor-diagram</require>
+                    </requires>
+                </configuration>
+            </plugin>
+
+            <!- The resource plugin must be declared after the Asciidoctor plugin
+              as they are bound to the same phase (prepare-package) and the resource plugin must
+              run after the Asciidoctor plugin to ensure that the documentation is generated before
+              it’s copied.
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>
+                                ${project.build.outputDirectory}/restdocs/
+                            </outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>
+                                        ${project.build.directory}/generated-docs
+                                    </directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin> -->
+        </plugins>
+    </build>
 
 </project>
