@@ -93,9 +93,19 @@
                             <goal>process-asciidoc</goal>
                         </goals>
                         <configuration>
-                            <backend>html</backend>
+                            <backend>html5</backend>
                             <doctype>book</doctype>
+                            <sourceHighlighter>highlightjs</sourceHighlighter>
                             <attributes>
+                                <toc>left</toc>
+                                <toclevels>4</toclevels>
+                                <icons>font</icons>
+                                <sectanchors>true</sectanchors>
+                                <sectnums>true</sectnums>
+                                <sectlinks>true</sectlinks>
+                                <revnumber>${project.version}</revnumber>
+                                <project-artifactId>${project.artifactId}</project-artifactId>
+                                <toc-collapsable>true</toc-collapsable>
                                 <snippets>${project.build.directory}/snippets</snippets>
                             </attributes>
                             <sourceDirectory>src/docs</sourceDirectory>

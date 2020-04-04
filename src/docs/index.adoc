@@ -1,0 +1,8 @@
+= "HELP GIVER" REST API Documentation
+
+[[overview]]
+= Overview
+
+This project {project-artifactId} have the following resources.
+
+include::HelpGiverRestController.adoc[]
