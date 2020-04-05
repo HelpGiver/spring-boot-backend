@@ -108,7 +108,7 @@
                                 <toc-collapsable>true</toc-collapsable>
                                 <snippets>${project.build.directory}/snippets</snippets>
                             </attributes>
-                            <sourceDirectory>src/docs</sourceDirectory>
+                            <sourceDirectory>src/docs/asciidoc</sourceDirectory>
                             <outputDirectory>target/generated-docs</outputDirectory>
                         </configuration>
                     </execution>

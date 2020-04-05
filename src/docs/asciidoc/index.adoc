@@ -1,0 +1,6 @@
+= "HELP GIVER" REST API Documentation
+
+[[overview]]
+= Overview
+
+include::HelpGiverRestController.adoc[]
