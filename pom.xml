@@ -95,7 +95,6 @@
                         <configuration>
                             <backend>html5</backend>
                             <doctype>book</doctype>
-                            <sourceHighlighter>highlightjs</sourceHighlighter>
                             <attributes>
                                 <toc>left</toc>
                                 <toclevels>4</toclevels>
